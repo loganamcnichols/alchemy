@@ -1,7 +1,7 @@
 *.ipynb
 .env
 .vscode
-**/.__pycache__
+**/__pycache__/
 *.ipynb_checkpoints
 *.csv
 venv
