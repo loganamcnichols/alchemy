@@ -129,6 +129,7 @@ class Alchemy():
            .str.replace('[^a-zA-Z0-9]', '_', regex=True)
            .str.lstrip('X') + '_' +
     records.loc[records["question_type"].isin(alchemy_types.MULTI_QUESTIONS), "question"]
+           .str.replace('[^a-zA-Z0-9]', '_', regex=True)
     )
 
     records.loc[records["question_type"].isin(alchemy_types.TWO_LAYER_QUESTIONS), "variable_name"] = (
@@ -136,6 +137,7 @@ class Alchemy():
            .str.replace('[^a-zA-Z0-9]', '_', regex=True)
            .str.lstrip('X') + '_' +
     records.loc[records["question_type"].isin(alchemy_types.TWO_LAYER_QUESTIONS), "question"]
+           .str.replace('[^a-zA-Z0-9]', '_', regex=True)
     )
 
     records.loc[records["variable_name"].str.contains(r'^\d', regex=True), "variable_name"] = (
