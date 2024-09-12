@@ -46,6 +46,7 @@ CREATE TABLE answer (
   answer          TEXT,
   FOREIGN KEY (sub_question_id) REFERENCES question(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
   FOREIGN KEY (question_id) REFERENCES question(id) ON UPDATE RESTRICT ON DELETE RESTRICT,
+  UNIQUE (survey_id, question_id, sub_question_id, option_id, response_id),
   FOREIGN KEY (response_id, survey_id) REFERENCES response(id, survey_id) ON UPDATE RESTRICT ON DELETE RESTRICT
 );
 

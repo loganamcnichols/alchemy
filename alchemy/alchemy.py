@@ -83,16 +83,9 @@ class Alchemy():
                    survey_ids:        Optional[Union[int, List[int]]]=None,
                    column_mode:      Optional[Literal["flat", "multi"]]="flat") -> pd.DataFrame:
     tmp_records = records.copy()
-    print("got here")
-    print(type(survey_ids))
     if survey_ids:
       if type(survey_ids) == int:
-        print(tmp_records.shape)
-        print("got here")
-        print(records["survey_id"])
-        print(survey_ids)
         tmp_records = tmp_records.loc[records["survey_id"] == survey_ids]
-        print(tmp_records.shape)
       elif type(survey_ids) == list:
         if type(survey_ids[0]) == int:
           tmp_records = tmp_records.loc[records["survey_id"].isin(survey_ids)]

@@ -32,8 +32,8 @@ INSERT OR IGNORE INTO
 
 ANSWER_INSERT_STMT = """
 INSERT INTO
-          answer(question_id, sub_question_id, option_id, response_id, survey_id, answer)
-          VALUES(:question_id, :sub_question_id, :option_id, :response_id, :survey_id, :answer);
+  answer(question_id,  sub_question_id,  option_id,  response_id,  survey_id,  answer)
+  VALUES(:question_id, :sub_question_id, :option_id, :response_id, :survey_id, :answer);
 """
 
 # Test query, should alter 0 rows
@@ -46,8 +46,8 @@ QUESTION_STATIC_CHECK = """
 
 QUESTION_INSERT_STMT = """
 INSERT OR IGNORE INTO 
-  question (id,  title,   base_type, question_type,  shortname)
-  VALUES  (:id, :title,  :base_type, :type,         :shortname);
+  question (id,  title,  base_type,  question_type, shortname)
+  VALUES   (:id, :title, :base_type, :type,         :shortname);
 """
 
 SURVEY_X_QUESTION_INSERT_STMT = """
@@ -84,7 +84,7 @@ def _iter_over(json_data):
           if   type(json_data) == dict
           else [])
   
-         
+          
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -111,14 +111,15 @@ def execute(cursor: sqlite3.Cursor, query: str, params: Any) -> Tuple[int, Optio
   except Exception as e:
     return cursor.rowcount, f"error executing query {query} with params {params}: {str(e)}"
  
-def executemany(cursor: sqlite3.Cursor, query: str, params: Any) -> Tuple[int, Optional[str]]:
+def executemany(cursor: sqlite3.Cursor, query: str, params: Any, suppress_output=False) -> Tuple[int, Optional[str]]:
   row_count = 0
   for param in params:
     try:
       cursor.execute(query, param)
       row_count += cursor.rowcount
     except Exception as e:
-      logger.warning(f"error executing query {query} with params {param}: {str(e)}")
+      if not suppress_output:
+        logger.warning(f"error executing query {query} with params {param}: {str(e)}")
   return row_count, None
 
 def load_survey(con: sqlite3.Connection, survey_id: str, 
@@ -327,14 +328,15 @@ def load_survey(con: sqlite3.Connection, survey_id: str,
                 parsed_answers.append(parsed_answer.copy())
             else:
               return f"What the hell am I supposed to do with this answer? {qtype} {answer}"
-          else:
-            return f"Encountered question type we don't know how to handle yet: type: {qtype}, answer: {answer}"
+        else:
+          return f"Encountered question type we don't know how to handle yet: type: {qtype}, answer: {answer}"
     
     logger.info(f"total potential answers: {total_answers}. null answers {null_answers}. Remaining {total_answers - null_answers}. Successfully parses {len(parsed_answers)}")
 
-    rowcount, err = executemany(cursor, ANSWER_INSERT_STMT, parsed_answers)
+    rowcount, err = executemany(cursor, ANSWER_INSERT_STMT, parsed_answers, True)
     if err != None:
       return err
+    
     page += 1
 
     logger.info(f"added {rowcount} answers to the database")

@@ -1,3 +1,4 @@
+import logging
 from dotenv import load_dotenv
 import pandas as pd
 import numpy as np
@@ -11,13 +12,30 @@ from datetime import datetime
 import time
 
 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+
+# Create handlers
+c_handler = logging.StreamHandler()  # Console handler
+f_handler = logging.FileHandler('bad.log')  # File handler
+c_handler.setLevel(logging.INFO)
+f_handler.setLevel(logging.DEBUG)
+
+# Create formatters and add it to handlers
+log_format = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+c_handler.setFormatter(log_format)
+f_handler.setFormatter(log_format)
+
+# Add handlers to the logger
+logger.addHandler(c_handler)
+logger.addHandler(f_handler)
 
 # Substitute these with your API details
 load_dotenv()
 api_key = os.environ.get('API_KEY')
 api_secret = os.environ.get('API_SECRET')
 
-survey_id = '7982666'
+survey_id = '7929817'
 #file_loc = "~/downloads/20240605103104-SurveyExport.csv"
 file_loc='test.csv'
 
@@ -141,7 +159,13 @@ qvars = list(qdf['variable_name'])
     
 
 
-bad = [c for c in list(qdf.variable_name) if c not in test]
+
+bad = [t for t in qdf[["qid", "variable_name", "text"]].itertuples() if t.variable_name not in test.columns]
+
+with open('bad.log', 'w', encoding='utf-8') as file:
+    file.writelines(str(line) + "\n" for line in bad)
+
+
 good = [c for c in list(qdf.variable_name) if c in test]
 
 
