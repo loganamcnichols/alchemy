@@ -138,8 +138,8 @@ class Alchemy():
     records.loc[records["question_type"].isin(alchemy_types.TWO_LAYER_QUESTIONS), "question"]
     )
 
-    records.loc[records["variable_name"].str.contains('^\d', regex=True), "variable_name"] = (
-    records.loc[records["variable_name"].str.contains('^\d', regex=True), "variable_name"]
+    records.loc[records["variable_name"].str.contains(r'^\d', regex=True), "variable_name"] = (
+    records.loc[records["variable_name"].str.contains(r'^\d', regex=True), "variable_name"]
             .str.pad(1, 'left', 'X') 
     )
     records.drop_duplicates(subset=['survey_id', 'response_id', 'variable_name'], inplace=True)
